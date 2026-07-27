@@ -81,15 +81,21 @@ def main():
     # ========== 连接 CTP（仅在填写了账号信息后执行） ==========
     if CTP_SETTING["用户名"] and CTP_SETTING["密码"]:
         main_engine.connect(CTP_SETTING, "CTP")
-        logger.info("CTP 连接请求已发送")
-        sleep(10)  # 等待连接完成
+        logger.info("CTP 连接请求已发送，等待服务器响应...")
+
+        # 等待 CTP 连接回调（最多等待 30 秒）
+        for i in range(30):
+            sleep(1)
+            if not running:
+                break
+        logger.info("CTP 连接等待结束")
 
         # 初始化并启动 CTA 策略
         cta_engine.init_engine()
         logger.info("CTA 策略引擎初始化完成")
 
         cta_engine.init_all_strategies()
-        sleep(60)  # 等待策略初始化完成
+        sleep(10)  # 等待策略初始化完成
         logger.info("CTA 策略全部初始化")
 
         cta_engine.start_all_strategies()
